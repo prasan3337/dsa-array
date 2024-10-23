@@ -1,0 +1,193 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Node for Passenger (Queue)
+class PassengerNode {
+public:
+    string name;
+    string phoneNumber;
+    string source;
+    string destination;
+    PassengerNode* next;
+
+    PassengerNode(string n, string phone, string src, string dest) {
+        name=n;
+        phoneNumber=phone;
+        source=src;
+        destination=dest;
+        next=nullptr;
+    }
+};
+
+// Class for Passenger Queue (Waiting List)
+class PassengerQueue {
+    PassengerNode* front;
+    PassengerNode* rear;
+
+public:
+    PassengerQueue() {
+        front=nullptr;
+        rear=nullptr;
+    }
+
+    // Add a passenger to the queue
+    void enqueue(string name, string phoneNumber, string source, string destination) {
+        PassengerNode* newNode=new PassengerNode(name, phoneNumber, source, destination);
+        if(rear){
+            rear->next=newNode; //  LINK THE OLD REAR TO THE NEW NODE
+        } 
+        else{
+            front=newNode; //  IF QUEUE IS EMPTY NEW NODE IS ALSO THE FRONT
+        }
+        rear=newNode; //  NEW NODE IS NOW THE REAR
+        cout<<"Passenger added to waiting list: "<<name<<"\n";
+    }
+
+    //  REMOVE A PASSENGER FROM THE QUEUE ( FIFO )
+    void dequeue(){
+        if (!front) {
+            cout << "Waiting list is empty!\n";
+            return;
+        }
+        PassengerNode* temp=front;
+        cout<<"Passenger removed from waiting list: "<<front->name << "\n";
+        front=front->next; //  MOVE FRONT TO THE NEXT NODE
+        if(!front) rear=nullptr; //  IF QUEUE IS EMPTY AFTER DEQUEUE 
+        delete temp; //  FREE THE MEMORY
+    }
+
+    //  DISPLAY ALL PASSENGERS  IN THE WAITING LIST
+    void displayQueue(){
+        if(!front){
+            cout << "Waiting list is empty!\n";
+            return;
+        }
+        cout << "\nPassengers in waiting list:\n";
+        PassengerNode* current=front;
+        while (current) {
+            cout<<"Passenger Name: "<<current->name<<"\n";
+            cout<<"Phone Number: "<<current->phoneNumber<< "\n";
+            cout<<"Source: " <<current->source <<"\n";
+            cout<<"Destination: "<<current->destination<<"\n";
+            current = current->next; //  MOVE TO THE NEXT NODE
+        }
+    }
+};
+
+// NODE FOR FEEDBACK ( STACK )
+class FeedbackNode {
+public:
+    string feedback;
+    FeedbackNode* next;
+
+    FeedbackNode(string fb) {
+        feedback=fb;
+        next=nullptr;
+    }
+};
+
+//  CLASS FOR FEEDBACK STACK
+class FeedbackStack {
+    FeedbackNode* top;
+
+public:
+    FeedbackStack() {
+        top = nullptr;
+    }
+
+    //  PUSH FEEDBACK ONTO THE STACK
+    void push(string feedback) {
+        FeedbackNode* newNode=new FeedbackNode(feedback);
+        newNode->next=top; //  NEW NODE POINTS TO CURREN TOP 
+        top=newNode; //  NEW NODE BECOMES STACK
+        cout<<"Feedback added: "<<feedback<<"\n";
+    }
+
+    // POP FEEDBACK FROM THE STACK (LIFO)
+    void pop(){
+        if (!top) {
+            cout << "No feedback to display!\n";
+            return;
+        }
+        FeedbackNode* temp=top;
+        cout << "Feedback removed: " << top->feedback << "\n";
+        top = top->next; //  MOVE TO THE NEXT NODE
+        delete temp; //  FREE THE MEMORY
+    }
+
+    //  DISPLAY ALL FEEDBACK IN STACK
+    void displayStack() {
+        if (!top) {
+            cout << "No feedback available!\n";
+            return;
+        }
+        cout << "\nFeedbacks from passengers:\n";
+        FeedbackNode* current = top;
+        
+        while (current) {
+            cout << "Feedback: " << current->feedback << "\n";
+            current = current->next; // MOVE TO THE NEXT NODE
+        }
+    }
+};
+
+// Main program for IRCTC ticket booking system
+int main() {
+    PassengerQueue waitingList;
+    FeedbackStack feedbackStack;
+
+    int choice;
+    string name, phone, source, destination, feedback;
+
+    do {
+        cout<<"\n--- IRCTC Ticket Booking System ---\n";
+        cout<<"1. Add Passenger to Waiting List\n";
+        cout<<"2. Remove Passenger from Waiting List\n";
+        cout<<"3. Show Waiting List\n";
+        cout<<"4. Add Feedback\n";
+        cout<<"5. Remove Feedback\n";
+        cout<<"6. Show Feedbacks\n";
+        cout<<"7. Exit\n";
+        cout<<"Enter your choice: ";
+        cin>>choice;
+        cin.ignore();  
+
+        switch (choice) {
+        case 1:
+            cout << "Enter Passenger Name: ";
+            getline(cin, name);
+            cout << "Enter Phone Number: ";
+            getline(cin, phone);
+            cout << "Enter Source: ";
+            getline(cin, source);
+            cout << "Enter Destination: ";
+            getline(cin, destination);
+            waitingList.enqueue(name, phone, source, destination);
+            break;
+        case 2:
+            waitingList.dequeue();
+            break;
+        case 3:
+            waitingList.displayQueue();
+            break;
+        case 4:
+            cout << "Enter feedback (Cleanliness, Food Quality, etc.): ";
+            getline(cin, feedback);
+            feedbackStack.push(feedback);
+            break;
+        case 5:
+            feedbackStack.pop();
+            break;
+        case 6:
+            feedbackStack.displayStack();
+            break;
+        case 7:
+            cout << "Exiting system...\n";
+            break;
+        default:
+            cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 7);
+    return 0;
+}
