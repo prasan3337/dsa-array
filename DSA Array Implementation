@@ -1,0 +1,196 @@
+#include <iostream>
+#include <string>
+using namespace std;
+const int MAX_SIZE = 50;  //  MAX SIZE OF QUEUE AND STACK
+
+// Passenger class for Queue CLASS Passenger FOR QUEUE
+class Passenger {
+public:
+    string name;
+    string phoneNumber;
+    string source;
+    string destination;
+    // BASIC CONSTRUCTOR
+    Passenger() {
+        name="";
+        phoneNumber="";
+        source="";
+        destination="";
+    }
+    // CONSTRUCTOR WITH PARAMETERS
+    Passenger(string n,string p, string s, string d) {
+        name = n;
+        phoneNumber =p;
+        source= s;
+        destination = d;
+    }
+};
+//  QUEUE IMPLEMENTATION FOR WAITING LIST OF PASSENGERS
+class PassengerQueue {
+    Passenger queue[MAX_SIZE];
+    int front,rear;
+
+public:
+    PassengerQueue() {
+        front = -1;
+        rear = -1;
+    }
+    //  CHECKING IF QUEUE ISS FULL OR NOT
+    bool isFull() {
+        return (rear ==MAX_SIZE-1);
+    }
+    //  CHECKING IF QUEUE IS EMPTY OR NOT
+    bool isEmpty() {
+        return (front == -1 || front>rear);
+    }
+    //  ADD PASSENGER TO TEH QUEUE
+    void enqueue(string name, string phoneNumber, string source, string destination) {
+        if(isFull()) {
+            cout << "Waiting list is full!\n";
+            return;
+        }
+        if(front==-1) front = 0;  //  INITIALIZE FRONT IF FIRST ELEMENT 
+        rear++;
+        queue[rear]=Passenger(name,phoneNumber,source,destination);  //  CONSTRUCTOR
+
+        cout<<"Passenger added to waiting list: "<<name << "\n";
+    }
+    
+    //  REMOVE A PASSENGER FROM THE QUEUE (FIFO)
+    void dequeue(){
+        if (isEmpty()) {
+            cout << "Waiting list is empty!\n";
+            return;
+        }
+        cout << "Passenger removed from waiting list: " << queue[front].name << "\n";
+        front++;
+    }
+    
+    //  DISPLAY ALL PASSENGERS IN WAITING LIST
+    void displayQueue(){
+        if (isEmpty()){
+            cout << "Waiting list is empty!\n";
+            return;
+        }
+        cout << "\nPassengers in waiting list:\n";
+        for (int i = front; i <= rear; i++) {
+            cout <<"Passenger Name: "<<queue[i].name<<"\n";
+            cout<<"Phone Number: "<<queue[i].phoneNumber<<" \n";
+            cout<<"Source: "<<queue[i].source<< "\n";
+            cout<<"Destination: "<< queue[i].destination<<"\n";
+        }
+    }
+}; // END OF CLASS PassengerQueue
+
+//   STACK IMPLEMENTATION FOR FEEDBACK COLLECTION
+class FeedbackStack{
+    string stack[MAX_SIZE];
+    int top;
+public: 
+    //CONSTRUCTOR
+    FeedbackStack(){
+        top = -1;
+    }
+    
+    //  CHECK IF STACK IS FULL
+    bool isFull(){
+        return (top== MAX_SIZE - 1);
+    }
+    
+    // CHECK IF STACK IS EMPTY
+    bool isEmpty(){
+        return (top== -1);
+    }
+    
+    //  PUSH FEEDBACK ONTO THE STACK
+    void push(string feedback) {
+        if (isFull()) {
+            cout << "Feedback stack is full!\n";
+            return;
+        }
+        top++;
+        stack[top] = feedback;
+        cout << "Feedback added: " << feedback << "\n";
+    }
+    
+    //  POP FEEDBACK FROM THE STACK(LIFO)
+    void pop() {
+        if (isEmpty()) {
+            cout << "No feedback to display!\n";
+            return;
+        }
+        cout << "Feedback removed: " << stack[top] << "\n";
+        top--;
+    }
+    
+    //  DISPLAY ALL FEEDBACKS IN STACK
+    void displayStack() {
+        if (isEmpty()) {
+            cout << "No feedback available!\n";
+            return;
+        }
+        cout << "\nFeedbacks from passengers:\n";
+        for (int i = top; i >= 0; i--) {
+            cout << "Feedback: " << stack[i] << "\n";
+        }
+    }
+};
+
+//  MAIN PROGRAM FOR IRCTC LIKE TICKET BOOKING SYSTEM
+int main() {
+    PassengerQueue waitingList; // OBJECT OF CLASS PassengerQueue
+    FeedbackStack feedbackStack; // OBJECT OF CLASS FeedbackStack
+    int choice;
+    string name, phone, source, destination, feedback;
+    do {
+        cout << "\n--- IRCTC Ticket Booking System ---\n";
+        cout << "1. Add Passenger to Waiting List\n";
+        cout << "2. Remove Passenger from Waiting List\n";
+        cout << "3. Show Waiting List\n";
+        cout << "4. Add Feedback\n";
+        cout << "5. Remove Feedback\n";
+        cout << "6. Show Feedbacks\n";
+        cout << "7. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();  //  IGNORE NEWLINE FROM INPUT BUFFER 
+
+        switch (choice) {
+        case 1:
+            cout << "Enter Passenger Name: ";
+            getline(cin, name);
+            cout << "Enter Phone Number: ";
+            getline(cin, phone);
+            cout << "Enter Source: ";
+            getline(cin, source);
+            cout << "Enter Destination: ";
+            getline(cin, destination);
+            waitingList.enqueue(name, phone, source, destination);
+            break;
+        case 2:
+            waitingList.dequeue();
+            break;
+        case 3:
+            waitingList.displayQueue();
+            break;
+        case 4:
+            cout << "Enter feedback (Cleanliness, Food Quality, etc.): ";
+            getline(cin, feedback);
+            feedbackStack.push(feedback);
+            break;
+        case 5:
+            feedbackStack.pop();
+            break;
+         case 6:
+            feedbackStack.displayStack();
+            break;
+        case 7:
+            cout << "Exiting system...\n";
+            break;
+         default:
+            cout << "Invalid choice! Please try again.\n";
+        }
+
+    } while (choice != 7);
+    return 0;
+}
